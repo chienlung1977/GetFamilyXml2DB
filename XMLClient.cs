@@ -21,6 +21,8 @@ using ICSharpCode.SharpZipLib.Core;
 
 using System.Xml;
 
+using LCL.Net;
+
 
 namespace GetFamilyXml2DB
 {
@@ -68,7 +70,8 @@ namespace GetFamilyXml2DB
         /// </summary>
         public void getXmlFiles( ) {
 
-            string[] arr = new string[] { "R22", "R23", "R04", "RS9", "RS4", "R96", "R08","R89","R99" };
+           //string[] arr = new string[] { "R22", "R23", "R04", "RS9", "RS4", "R96", "R08","R89","R99" };
+            string[] arr = new string[] { "R00","R22", "RS9","RS4","R99","R96","R89","R08","R04" };
             string filePath = "";
             string fileName = "";
             string okPath = "";
@@ -85,17 +88,39 @@ namespace GetFamilyXml2DB
                     filePath = this.ftp + "/" + arr[i] + "/WORK/";
                     okPath = this.ftp + "/" + arr[i] + "/OK/";
                     // fileName = arr[i] + this.ecKey + "DFM" + DateTime.Now.ToString("yyyyMMdd") + ".XML.zip";
-                    //測試用
-                    fileName = arr[i] + this.ecKey + "DFM" + execDate + ".XML.zip";
-                    pl.logMessage("\r\n開始下載檔案:" + filePath + fileName );
-                    returnPath  = downloadFile(filePath , fileName,okPath );                   
-                    pl.logMessage("完成下載檔案:" + filePath + fileName);
-                    if (returnPath != "") {
-                        pl.logMessage("\r\n開始讀入檔案:" + returnPath);
-                        processFile(returnPath);
-                        pl.logMessage("完成讀入檔案:" + returnPath);
+
+                    string target = filePath;
+
+                    LCL.Net.Ftp ftp = new LCL.Net.Ftp(target, this.id, this.pwd);
+                    string[] fileList = ftp.getFileList();
+
+                    if (fileList != null)
+                    {
+                        foreach (string myFileName in fileList)
+                        {
+                            //測試用
+                            //fileName = arr[i] + this.ecKey + "DFM" + execDate + ".XML.zip";
+                            fileName = myFileName;
+                            pl.logMessage("\r\n開始下載檔案:" + filePath + fileName);
+                            returnPath = downloadFile(filePath, fileName, okPath);
+                            pl.logMessage("完成下載檔案:" + filePath + fileName);
+                            if (returnPath != "")
+                            {
+                                pl.logMessage("\r\n開始讀入檔案:" + returnPath);
+                                processFile(returnPath);
+                                pl.logMessage("完成讀入檔案:" + returnPath);
+                            }
+                        }
+
                     }
-                    
+                    else {
+                        pl.logMessage(filePath + "沒有任何檔案");
+                    }
+
+                  
+
+
+
                 }
                 pl.endLog();
             }
@@ -117,54 +142,56 @@ namespace GetFamilyXml2DB
 
             try
             {
-               
+                int num=0;
                 switch (this.type)
                 {
-                    
+                    case PROCESS_TYPE.R00:
+                        
+                        processR00(filePath,out num );
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
+                        break;
                     case PROCESS_TYPE.R22:
-                        pl.logMessage("開始新增R22資料");
-                        processR22(filePath);
-                        pl.logMessage("完成新增R22資料");
+                        
+                        processR22(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
                     case PROCESS_TYPE.R23:
-                        pl.logMessage("開始新增R23資料");
-                        processR23(filePath);
-                        pl.logMessage("完成新增R23資料");
+                       
+                        processR23(filePath, out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
                     case PROCESS_TYPE.R04:
-                        pl.logMessage("開始新增R04資料");
-                        processR04(filePath);
-                        pl.logMessage("完成新增R04資料");
+                        
+                        processR04(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
                     case PROCESS_TYPE.RS9:
-                        pl.logMessage("開始新增RS9資料");
-                        processRS9(filePath);
-                        pl.logMessage("完成新增RS9資料");
+                        
+                        processRS9(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
                     case PROCESS_TYPE.RS4:
-                        pl.logMessage("開始新增RS4資料");
-                        processRS4(filePath);
-                        pl.logMessage("完成新增RS4資料");
+                        
+                        processRS4(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
                     case PROCESS_TYPE.R96:
-                        pl.logMessage("開始新增R96資料");
-                        processR96(filePath);
-                        pl.logMessage("完成新增R96資料");
+                        
+                        processR96(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
                     case PROCESS_TYPE.R08:
-                        pl.logMessage("開始新增R08資料");
-                        processR08(filePath);
-                        pl.logMessage("完成新增R08資料");
+                        
+                        processR08(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
-                    case PROCESS_TYPE.R99:
-                        pl.logMessage("開始新增R99資料");
-                        processR99(filePath);
-                        pl.logMessage("完成新增R99資料");
+                    case PROCESS_TYPE.R99:                        
+                        processR99(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
-                    case PROCESS_TYPE.R89:
-                        pl.logMessage("開始新增R89資料");
-                        processR89(filePath);
-                        pl.logMessage("完成新增R89資料");
+                    case PROCESS_TYPE.R89:                        
+                        processR89(filePath,out num);
+                        pl.logMessage("完成新增" + filePath + "資料共" + num + "筆");
                         break;
                 }
             }
@@ -181,10 +208,86 @@ namespace GetFamilyXml2DB
         }
 
 
+        #region R00
+
+        private void processR00(string filePath ,out int num)
+        {
+
+            num = 0;
+
+            try
+            {
+
+                string mypath = filePath.Substring(0, filePath.Length - 4);
+                string doc = File.ReadAllText(mypath);
+                doc = doc.Replace("''", "");
+                XmlDocument xdoc = new XmlDocument();
+                xdoc.LoadXml(doc);
+
+                string PRDT = "";
+
+                string StoreId = "";
+                string STORE_NAME = "";
+                string MDC_START_DAT = "";
+                string MDC_END_DATE = "";
+                string ROUTE = "";
+                string STEP = "";
+                string STORE_ADDRESS = "";
+                string TEL_NO = "";
+                string OLD_STORE = "";
+                string STORE_CLOSE_DATE = "";
+                string sql;
+
+                XmlNode xheader = xdoc.DocumentElement.SelectSingleNode("//HEADER");
+                //Console.WriteLine(xheader.SelectSingleNode("PRDT").InnerText);
+                PRDT = xheader.SelectSingleNode("PRDT").InnerText;
+
+                XmlNodeList xnode = xdoc.DocumentElement.SelectNodes("//R00");
+                if (xnode != null)
+                {
+                    foreach (XmlNode node2 in xnode)
+                    {
+                        num += 1;
+                        //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
+                        StoreId = node2.SelectSingleNode("StoreId").InnerText;
+                        STORE_NAME = node2.SelectSingleNode("STORE_NAME").InnerText;
+                        MDC_START_DAT = node2.SelectSingleNode("MDC_START_DATE").InnerText;
+                        MDC_END_DATE = node2.SelectSingleNode("MDC_END_DATE").InnerText;
+                        ROUTE = node2.SelectSingleNode("ROUTE").InnerText;
+                        STEP = node2.SelectSingleNode("STEP").InnerText;
+                        STORE_ADDRESS = node2.SelectSingleNode("STORE_ADDRESS").InnerText;
+                        TEL_NO = node2.SelectSingleNode("TEL_NO").InnerText;
+                        OLD_STORE = node2.SelectSingleNode("OLD_STORE").InnerText;
+                        STORE_CLOSE_DATE = node2.SelectSingleNode("STORE_CLOSE_DATE").InnerText;
+
+                        //店鋪檔每日會更新，所以刪除舊的再加新的
+                        sql = @"DELETE Order_Transport_Family_R00 WHERE StoreId='" + StoreId + "'";
+                        Execute(sql);
+                        sql = @"INSERT INTO Order_Transport_Family_R00(PRDT,StoreId,STORE_NAME,MDC_START_DATE,MDC_END_DATE,ROUTE,STEP,STORE_ADDRESS,TEL_NO,OLD_STORE,STORE_CLOSE_DATE)
+                                     VALUES('" + PRDT + "','" + StoreId + "','" + STORE_NAME + "','" + MDC_START_DAT + "','" + MDC_END_DATE + "','" + ROUTE + "','" + STEP + "','"
+                                     + STORE_ADDRESS + "','" + TEL_NO + "','" + OLD_STORE + "','" + STORE_CLOSE_DATE + "')";
+                        Execute(sql);
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                pl.logMessage(ex.Message);
+            }
+        }
+
+        #endregion
+
+
+
         #region R04
 
-        private void processR04(string filePath) {
+        private void processR04(string filePath,out int num) {
 
+            num = 0;
             try
             {
 
@@ -212,6 +315,7 @@ namespace GetFamilyXml2DB
                 if (xnode != null) {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -239,8 +343,10 @@ namespace GetFamilyXml2DB
 
         #region RS9
 
-        private void processRS9(string filePath)
+        private void processRS9(string filePath,out int num)
         {
+
+            num = 0;
             try
             {
 
@@ -272,6 +378,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -303,8 +410,9 @@ namespace GetFamilyXml2DB
 
         #region RS4
 
-        private void processRS4(string filePath)
+        private void processRS4(string filePath,out int num)
         {
+            num = 0;
             try
             {
 
@@ -336,6 +444,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -367,8 +476,9 @@ namespace GetFamilyXml2DB
 
         #region R96
 
-        private void processR96(string filePath)
+        private void processR96(string filePath,out int num)
         {
+            num = 0;
             try
             {
 
@@ -399,6 +509,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -430,8 +541,9 @@ namespace GetFamilyXml2DB
 
         #region R08
 
-        private void processR08(string filePath)
+        private void processR08(string filePath,out int num)
         {
+            num = 0;
             try
             {
 
@@ -461,6 +573,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -489,11 +602,14 @@ namespace GetFamilyXml2DB
 
         #region R22
 
-        private void processR22(string filePath)
+        private void processR22(string filePath,out int num )
         {
+
+            num = 0;
+
             try
             {
-
+                
                 string mypath = filePath.Substring(0, filePath.Length - 4);
                 string doc = File.ReadAllText(mypath);
                 doc = doc.Replace("''", "");
@@ -520,6 +636,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -549,8 +666,9 @@ namespace GetFamilyXml2DB
 
         #region R23
 
-        private void processR23(string filePath)
+        private void processR23(string filePath,out int num)
         {
+             num = 0;
             try
             {
 
@@ -580,6 +698,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -610,8 +729,9 @@ namespace GetFamilyXml2DB
         #region R99
 
 
-        private void processR99(string filePath)
+        private void processR99(string filePath,out int num)
         {
+            num = 0;
             try
             {
 
@@ -645,6 +765,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -682,8 +803,9 @@ namespace GetFamilyXml2DB
         #region R89
 
 
-        private void processR89(string filePath)
+        private void processR89(string filePath,out int num)
         {
+            num = 0;
             try
             {
 
@@ -717,6 +839,7 @@ namespace GetFamilyXml2DB
                 {
                     foreach (XmlNode node2 in xnode)
                     {
+                        num += 1;
                         //Console.WriteLine(node2.SelectSingleNode("ShipmentNo").InnerText);
                         ParentId = node2.SelectSingleNode("ParentId").InnerText;
                         EshopId = node2.SelectSingleNode("EshopId").InnerText;
@@ -764,6 +887,7 @@ namespace GetFamilyXml2DB
 
             FtpWebResponse response = null;
             string url = path + filename;            
+            //string url = filename;
             string myDonwloadPath = this.downloadPath + "\\" + this.execDate + "\\";
             if (!Directory.Exists(myDonwloadPath) ) {
                 Directory.CreateDirectory(myDonwloadPath);

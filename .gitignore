@@ -49,3 +49,12 @@ GetFamilyXml2DB.csproj
 *.user
 GetFamilyXml2DB_TemporaryKey.pfx
 obj/Debug/GetFamilyXml2DB.csproj.FileListAbsolute.txt
+bin/Debug/GetFamilyXml2DB.application
+bin/Debug/GetFamilyXml2DB.exe.config
+*.pdb
+*.dll
+*.pdb
+obj/Debug/GetFamilyXml2DB.exe.manifest
+*.application
+*.cache
+*.manifest
